@@ -1,0 +1,44 @@
+exec_once:
+ execs:
+  Install composer:
+   name: Install composer
+   command: |
+     #!/usr/bin/env bash
+     apt-get update
+     if ! test -f /usr/local/bin/composer; then
+       export COMPOSER_HOME=/usr/local/bin/.composer
+       curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+       exit 0
+     fi
+ files:
+  /etc/apache2/sites-enabled/mautic.conf:
+    name: mautic.conf
+    path: /etc/apache2/sites-enabled/
+    mode: "0644"
+    owner: root
+    group: root
+    content: |
+      <VirtualHost *:80>
+        DocumentRoot /var/www/html/mautic
+        <Directory /var/www/html/mautic>
+          AllowOverride All
+          Order Allow,Deny
+          Allow from All
+        </Directory>
+        CustomLog /var/log/apache2/access.log combined
+        ErrorLog /var/log/apache2/error.log
+      </VirtualHost>
+post_app_deploy:
+ execs:
+  Run composer install:
+   name: Run composer install
+   command: |
+     #!/usr/bin/env bash
+     export COMPOSER_HOME=/usr/local/bin/.composer
+     /usr/local/bin/composer install
+  Restart apache:
+   name: Restart apache
+   command: |
+     #!/usr/bin/env bash
+     chown -R www-data:www-data /var/www/html/mautic
+     service apache2 restart
