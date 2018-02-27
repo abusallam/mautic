@@ -2,6 +2,7 @@
 !.gitignore
 !.htaccess
 !.gitkeep
+!.bunnyconfig
 .php_cs.cache
 /.env
 /composer.phar
