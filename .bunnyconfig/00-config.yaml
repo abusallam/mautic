@@ -1,4 +1,5 @@
 exec_once:
+ files:
   /etc/apache2/sites-enabled/mautic.conf:
     name: mautic.conf
     path: /etc/apache2/sites-enabled/
