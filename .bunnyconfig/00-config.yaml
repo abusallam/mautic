@@ -1,16 +1,4 @@
 exec_once:
- execs:
-  Install composer:
-   name: Install composer
-   command: |
-     #!/usr/bin/env bash
-     apt-get update
-     if ! test -f /usr/local/bin/composer; then
-       export COMPOSER_HOME=/usr/local/bin/.composer
-       curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
-       exit 0
-     fi
- files:
   /etc/apache2/sites-enabled/mautic.conf:
     name: mautic.conf
     path: /etc/apache2/sites-enabled/
@@ -25,10 +13,10 @@ exec_once:
           Order Allow,Deny
           Allow from All
         </Directory>
+
         CustomLog /var/log/apache2/access.log combined
         ErrorLog /var/log/apache2/error.log
       </VirtualHost>
-post_app_deploy:
  execs:
   Run composer install:
    name: Run composer install
@@ -36,6 +24,8 @@ post_app_deploy:
      #!/usr/bin/env bash
      export COMPOSER_HOME=/usr/local/bin/.composer
      /usr/local/bin/composer install
+post_app_deploy:
+ execs:
   Restart apache:
    name: Restart apache
    command: |
